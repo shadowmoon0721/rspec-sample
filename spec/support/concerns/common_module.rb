@@ -1,5 +1,46 @@
 require 'rails_helper'
 
+shared_examples '入力項目の有無' do
+  let(:object_name) { described_class.to_s.underscore.to_sym }
+  let(:model) { FactoryBot.build(object_name) }
+
+  context '必須入力であること' do
+    it 'お名前が必須であること' do
+      expect(model).not_to be_valid
+      expect(model.errors[:name]).to include(I18n.t('errors.messages.blank'))
+    end
+
+    it 'メールアドレスが必須であること' do
+      expect(model).not_to be_valid
+      expect(model.errors[:mail]).to include(I18n.t('errors.messages.blank'))
+    end
+
+    it '登録できないこと' do
+      expect(model.save).to be_falsey
+    end
+  end
+
+  context '任意入力であること' do
+    it 'ご意見・ご要望が任意であること' do
+      expect(model).not_to be_valid
+      expect(model.errors[:request]).not_to include(I18n.t('errors.messages.blank'))
+    end
+  end
+end
+
+shared_examples 'メールアドレスの形式' do
+  let(:object_name) { described_class.to_s.underscore.to_sym }
+  let(:model) { FactoryBot.build(object_name) }
+
+  context '不正な形式のメールアドレスの場合' do
+    it 'エラーになること' do
+      model.mail = "taro.tanaka"
+      expect(model).not_to be_valid
+      expect(model.errors[:mail]).to include(I18n.t('errors.messages.invalid'))
+    end
+  end
+end
+
 # [Point.3-12-1]共通化するテストケースを定義します。
 shared_examples '価格の表示' do
   # [Point.3-12-2]呼出し元のモデルを動的に定義します。
