@@ -46,9 +46,7 @@ RSpec.describe FoodEnquete, type: :model do
       end
 
       it '異なるメールアドレスで回答できること' do
-
         enquete_yamada = FactoryBot.build(:food_enquete_yamada)
-  
         expect(enquete_yamada).to be_valid
         enquete_yamada.save
         # [Point.3-6-4]問題なく登録できます。
