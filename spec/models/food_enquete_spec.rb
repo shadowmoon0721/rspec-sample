@@ -7,7 +7,7 @@ RSpec.describe FoodEnquete, type: :model do
                             満足度:良い score: 3, 
                             希望するプレゼント:ビール飲み放題 present_id: 1)' do
 
-        enquete = FactoryBot.build(:food_enquete)
+        enquete = FactoryBot.build(:food_enquete_tanaka)
 
         # [Point.3-3-2]「バリデーションが正常に通ること(バリデーションエラーが無いこと)」を検証します。
         expect(enquete).to be_valid
@@ -84,9 +84,9 @@ RSpec.describe FoodEnquete, type: :model do
     context 'メールアドレスを確認すること' do
       it '同じメールアドレスで再び回答できないこと' do
 
-        FactoryBot.create(:food_enquete)
+        FactoryBot.create(:food_enquete_tanaka)
 
-        re_enquete_tanaka = FactoryBot.build(:food_enquete, food_id: 0, score: 1, present_id: 0, request: "スープがぬるかった")
+        re_enquete_tanaka = FactoryBot.build(:food_enquete_tanaka, food_id: 0, score: 1, present_id: 0, request: "スープがぬるかった")
 
 
         # [Point.3-6-3]メールアドレスが既に存在するメッセージが含まれることを検証します。
@@ -98,17 +98,9 @@ RSpec.describe FoodEnquete, type: :model do
 
       it '異なるメールアドレスで回答できること' do
   
-        FactoryBot.create(:food_enquete)
+        FactoryBot.create(:food_enquete_tanaka)
 
-        enquete_yamada = FoodEnquete.new(
-          name: '山田 次郎',
-          mail: 'jiro.yamada@example.com',
-          age: 22,
-          food_id: 1,
-          score: 2,
-          request: '',
-          present_id: 0
-        )
+        enquete_yamada = FactoryBot.build(:food_enquete_yamada)
   
         expect(enquete_yamada).to be_valid
         enquete_yamada.save
@@ -116,22 +108,11 @@ RSpec.describe FoodEnquete, type: :model do
         expect(FoodEnquete.all.size).to eq 2
       end
     end
-
-
-
     
     context '年齢を確認すること' do
       it '未成年はビール飲み放題を選択できないこと' do
-        # [Point.3-5-3]未成年のテストデータを作成します。 
-        enquete_sato = FoodEnquete.new(
-          name: '佐藤 仁美',
-          mail: 'hitomi.sato@example.com',
-          age: 19,
-          food_id: 2,
-          score: 3,
-          request: 'おいしかったです',
-          present_id: 1 #ビール飲み放題
-        )
+
+        enquete_sato = FactoryBot.build(:food_enquete_sato)
 
         expect(enquete_sato).not_to be_valid
         # [Point.3-5-4]成人のみ選択できる旨のメッセージが含まれることを検証します。
@@ -139,16 +120,8 @@ RSpec.describe FoodEnquete, type: :model do
       end
 
       it '成人はビール飲み放題を選択できること' do
-        # [Point.3-5-5]未成年のテストデータを作成します。
-        enquete_sato = FoodEnquete.new(
-          name: '佐藤 仁美',
-          mail: 'hitomi.sato@example.com',
-          age: 20,
-          food_id: 2,
-          score: 3,
-          request: 'おいしかったです。',
-          present_id: 1   # ビール飲み放題
-        )
+
+        enquete_sato = FactoryBot.build(:food_enquete_sato, age: 20)
 
         # [Point.3-5-6]「バリデーションが正常に通ること(バリデーションエラーが無いこと)」を検証します。
         expect(enquete_sato).to be_valid
